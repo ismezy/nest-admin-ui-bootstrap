@@ -7,55 +7,84 @@
     NavigationDrawer,
     List,
     ListItem,
-    Divider
+    Divider, Button
   } from 'svelte-materialify';
+  import Layout from '../Layout.svelte';
+  import ResizeObserver from '../ResizeObserver.svelte';
+  import { createEventDispatcher } from 'svelte';
 
+  const dispatcher = createEventDispatcher();
   let className = '';
   export { className as class };
 
   export let menus: Menus = [];
+  let closed = false;
 
   $: classes = classNames(className, {
     'admin-layout-nav': true
   });
-</script>
 
-<div class={classes}>
-  <!--    <ul class='nav'>-->
-  <!--      {#each menus as menu, index (index)}-->
-  <!--        <li class='item' class:active={$page.url.pathname === menu.path}>-->
-  <!--          <a href={menu.path}>-->
-  <!--            <IconFont icon={menu.icon} />-->
-  <!--            <span>{menu.title}</span>-->
-  <!--          </a>-->
-  <!--        </li>-->
-  <!--      {/each}-->
-  <!--    </ul>-->
-  <NavigationDrawer>
-    <List dense nav>
-      {#each menus as menu, index (index)}
-        <ListItem><span slot='prepend'><IconFont icon={menu.icon} /></span> <a href={menu.path}>{menu.title}</a>
-        </ListItem>
-      {/each}
-    </List>
-  </NavigationDrawer>
+  $: handleIcon = closed ? 'indent-w' : 'outdent-w';
+
+  function toggleNav() {
+    closed = !closed;
+  }
+
+  function resizeHandle(event) {
+    dispatcher('resize', event);
+  }
+</script>
+<div class='admin-layout-nav'>
+  <ResizeObserver on:resize={resizeHandle}></ResizeObserver>
+  {#if menus.length}
+    <Layout direction='column'>
+      <div use:autoHeight>
+        <NavigationDrawer class='theme--dark nav-menu flat' mini={closed}>
+          <List dense nav>
+            {#each menus as menu, index (index)}
+              <ListItem><a slot='prepend' href={menu.path}>
+                <IconFont icon={menu.icon} />
+              </a> <a href={menu.path}>{menu.title}</a>
+              </ListItem>
+            {/each}
+          </List>
+        </NavigationDrawer>
+      </div>
+      <div class='handle theme--dark '>
+        <Button icon class='indigo-text lighten-4' on:click={toggleNav}>
+          <IconFont icon={handleIcon} />
+        </Button>
+      </div>
+    </Layout>
+  {/if}
 </div>
 
 <style lang='scss'>
   .admin-layout-nav {
-    background: var(--bs-body-color);
-    display: flex;
-    flex-direction: column;
+    //width: 256px;
     height: 100%;
 
-    .logo {
-      color: #fff;
-      height: 40px;
-      line-height: 40px;
+    .handle {
       text-align: center;
+    }
 
-      :global(.iconfont) {
-        font-size: 2rem;
+    :global(.nav-menu .iconfont) {
+      margin-right: 1rem;
+    }
+
+    :global(.nav-menu a) {
+      color: #fff;
+      text-decoration: none;
+    }
+
+    :global(.logo .iconfont) {
+      font-size: 2rem;
+      margin-left: 16px;
+    }
+
+    :global {
+      .iconfont {
+        font-size: 24px;
       }
     }
   }

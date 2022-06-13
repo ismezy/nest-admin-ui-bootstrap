@@ -2,23 +2,24 @@
   import type { LayoutDirection } from './LayouyDef';
   import classNames from 'classnames';
 
+  let dom: HTMLElement;
   let className = '';
   export { className as class };
   export let direction: LayoutDirection = 'row';
 
   $: classes = classNames(className, {
-    'youi-layout': true,
+    'myui-layout': true,
     'row-mode': direction !== 'column',
     'column-mode': direction === 'column'
   });
 </script>
 
-<div class={classes}>
+<div class={classes} bind:this={dom}>
   <slot />
 </div>
 
 <style lang='scss'>
-  .youi-layout {
+  .myui-layout {
     display: flex;
     flex: auto;
 

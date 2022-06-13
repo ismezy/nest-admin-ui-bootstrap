@@ -1,5 +1,4 @@
-<script>
-  import SubModule from '../../../lib/ui/layout/admin/SubModule.svelte';
+<script lang='ts'>
 </script>
 
-<SubModule></SubModule>
+<slot></slot>

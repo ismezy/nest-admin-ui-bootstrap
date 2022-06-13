@@ -3,6 +3,8 @@ export interface Menu {
   title?: string;
   icon?: string;
   children?: Menus;
+  id?: string;
+  parent?: Menu;
 }
 
 export type Menus = Menu[];
